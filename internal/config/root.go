@@ -5,6 +5,8 @@ import (
 
 	"github.com/go-logr/logr"
 
+	"github.com/projectsveltos/sveltosctl/internal/k8s"
+
 	ictx "github.com/projectsveltos/sveltosctl/internal/ctx"
 	"github.com/projectsveltos/sveltosctl/internal/logging"
 )
@@ -14,6 +16,7 @@ type CtlConfig struct {
 	NoConsoleOutput bool
 	Verbose         bool
 	logger          *logging.CliLogger
+	mgmtCluster     *k8s.Cluster
 }
 
 func NewCtlConfig() *CtlConfig {
@@ -21,6 +24,7 @@ func NewCtlConfig() *CtlConfig {
 		NoConsoleOutput: false,
 		Verbose:         false,
 		logger:          logging.NewLogger(),
+		mgmtCluster:     nil,
 	}
 }
 
@@ -44,4 +48,11 @@ func (cfg *CtlConfig) SetLogger(logger *logging.CliLogger) {
 
 func (cfg *CtlConfig) Logger() logr.Logger {
 	return cfg.logger.Logger()
+}
+
+func (cfg *CtlConfig) SetMgmtCluster(mgmtCluster *k8s.Cluster) {
+	cfg.mgmtCluster = mgmtCluster
+}
+func (cfg *CtlConfig) MgmtCluster() *k8s.Cluster {
+	return cfg.mgmtCluster
 }
