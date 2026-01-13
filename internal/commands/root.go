@@ -31,6 +31,6 @@ func RootCmd(ctlConfig *config.CtlConfig) *cobra.Command {
 	rootCmd.PersistentFlags().StringVarP(&ctlConfig.CfgFile, "config-filename", "c", config.GetConfigPath(config.GetUserHomeDir())+"/config.yaml", "config file (default is config.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&ctlConfig.NoConsoleOutput, "console-output", "o", false, "enable pretty console output, defaults to false")
 	rootCmd.PersistentFlags().BoolVarP(&ctlConfig.Verbose, "verbose", "v", false, "enable verbose output, defaults to false")
-	rootCmd.AddCommand(cmdVersion(), cmdGenerate())
+	rootCmd.AddCommand(cmdVersion(), cmdGenerate(), cmdRegister())
 	return rootCmd
 }
