@@ -9,7 +9,7 @@ import (
 
 func InitLogger() logr.Logger {
 	klog.InitFlags(nil)
-	return klog.Background()
+	return klog.NewKlogr()
 }
 
 func InitLoggerWithContext(ctx context.Context) context.Context {

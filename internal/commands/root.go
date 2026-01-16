@@ -6,12 +6,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	ictx "github.com/projectsveltos/sveltosctl/internal/ctx"
-
 	"github.com/projectsveltos/sveltosctl/internal/config"
 )
 
-func RootCmd(ctlConfig *config.CtlConfig) *cobra.Command {
+func RootCmd(ctx context.Context, ctlConfig *config.CtlConfig) (*cobra.Command, context.Context) {
 	rootCmd := &cobra.Command{
 		Use:   "sveltosctl",
 		Short: "CLI for sveltosctl",
@@ -20,9 +18,6 @@ func RootCmd(ctlConfig *config.CtlConfig) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			ctx := cmd.Context()
-			ctx = context.WithValue(ctx, ictx.CtlConfigCtxKey, ctlConfig)
-			cmd.SetContext(ctx)
 			return nil
 		},
 	}
@@ -31,6 +26,7 @@ func RootCmd(ctlConfig *config.CtlConfig) *cobra.Command {
 	rootCmd.PersistentFlags().StringVarP(&ctlConfig.CfgFile, "config-filename", "c", config.GetConfigPath(config.GetUserHomeDir())+"/config.yaml", "config file (default is config.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&ctlConfig.NoConsoleOutput, "console-output", "o", false, "enable pretty console output, defaults to false")
 	rootCmd.PersistentFlags().BoolVarP(&ctlConfig.Verbose, "verbose", "v", false, "enable verbose output, defaults to false")
-	rootCmd.AddCommand(cmdVersion(), cmdGenerate(), cmdRegister())
-	return rootCmd
+	cGenerate, ctx := cmdGenerate(ctx)
+	rootCmd.AddCommand(cmdVersion(), cGenerate, cmdRegister())
+	return rootCmd, ctx
 }

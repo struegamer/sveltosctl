@@ -44,7 +44,7 @@ func getClusterOptions(ctx context.Context) *clusterOptions {
 
 func clusterCmd(cmdClusterOptions *clusterOptions) *cobra.Command {
 	checkFlags := func(cmd *cobra.Command) error {
-		kubeCfg, err := cmd.Flags().GetString("kubeconfig")
+		kubeCfg, err := cmd.Flags().GetString("generate")
 		if err != nil {
 			return err
 		}
@@ -53,7 +53,7 @@ func clusterCmd(cmdClusterOptions *clusterOptions) *cobra.Command {
 			return err
 		}
 		if kubeCfg == "" && fleetClusterContextName == "" {
-			return errors.New("no --kubeconfig or --fleet-cluster-context specified, provide at least one of them")
+			return errors.New("no --generate or --fleet-cluster-context specified, provide at least one of them")
 		}
 		cluster, err := cmd.Flags().GetString("cluster")
 		if err != nil {
@@ -100,22 +100,22 @@ func clusterCmd(cmdClusterOptions *clusterOptions) *cobra.Command {
 	cmdCluster.Flags().StringVar(&cmdClusterOptions.Namespace, "namespace", "", `Specifies the namespace where Sveltos will create a resource (SveltosCluster) to represent
                                          the registered cluster.`)
 	cmdCluster.Flags().StringVar(&cmdClusterOptions.Cluster, "cluster", "", `Defines a name for the registered cluster within Sveltos.`)
-	cmdCluster.Flags().StringVar(&cmdClusterOptions.kubeconfig, "kubeconfig", "",
-		`Provides the path to a file containing the kubeconfig for the Kubernetes cluster
+	cmdCluster.Flags().StringVar(&cmdClusterOptions.kubeconfig, "generate", "",
+		`Provides the path to a file containing the generate for the Kubernetes cluster
 you want to register.
-If you don't have a kubeconfig file yet, you can use the "sveltosctl generate kubeconfig" command.
+If you don't have a generate file yet, you can use the "sveltosctl generate generate" command.
 Be sure to point that command to the specific cluster you want to manage.
-This will help you create the necessary kubeconfig file before registering the cluster
+This will help you create the necessary generate file before registering the cluster
 \with Sveltos.
-Either --kubeconfig or --fleet-cluster-context must be provided.`)
+Either --generate or --fleet-cluster-context must be provided.`)
 	cmdCluster.Flags().StringVar(&cmdClusterOptions.fleetClusterContext, "fleet-cluster-context", "",
-		`If your kubeconfig has multiple contexts:
+		`If your generate has multiple contexts:
 - One context points to the management cluster (default one)
 - Another context points to the cluster you actually want to manage;
 In this case, you can specify the context name with the --fleet-cluster-context flag.
 This tells the command to use the specific context to generate a Kubeconfig Sveltos
-can use and then create a SveltosCluster with it so you don't have to provide kubeconfig
-Either --kubeconfig or --fleet-cluster-context must be provided.`)
+can use and then create a SveltosCluster with it so you don't have to provide generate
+Either --generate or --fleet-cluster-context must be provided.`)
 	cmdCluster.Flags().BoolVar(&cmdClusterOptions.pullMode, "pullmode", false,
 		`this registers a cluster in pull mode. When enabled, the managed cluster will actively
 fetch its configurations from the management cluster, which is ideal for scenarios with

@@ -30,8 +30,8 @@ func cmdVersion() *cobra.Command {
 				cmd.Println("Git commit: ", gitCommit)
 			} else {
 				logger := ctlConfig.Logger()
-				logger.V(0).Info(fmt.Sprintf("Client Version: %s", gitVersion))
-				logger.V(0).Info(fmt.Sprintf("Git commit: %s", gitCommit))
+				logger.Info(fmt.Sprintf("Git commit: %s", gitCommit))
+				logger.Info(fmt.Sprintf("Client Version: %s", gitVersion))
 			}
 			return nil
 		},

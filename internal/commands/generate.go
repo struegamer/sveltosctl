@@ -1,13 +1,17 @@
 package commands
 
-import "github.com/spf13/cobra"
+import (
+	"context"
 
-func cmdGenerate() *cobra.Command {
+	"github.com/spf13/cobra"
+)
+
+func cmdGenerate(ctx context.Context) (*cobra.Command, context.Context) {
+	ctx = newKubeConfigOptionsWithContext(ctx)
 	generateCmd := &cobra.Command{
 		Use:   "generate [command]",
 		Short: "Generates resources. See subcommands",
 	}
-	kubeConfigCmdOptions := newKubeconfigOptions()
-	generateCmd.AddCommand(cmdKubeconfig(kubeConfigCmdOptions))
-	return generateCmd
+	generateCmd.AddCommand(cmdKubeconfig(ctx))
+	return generateCmd, ctx
 }

@@ -34,7 +34,7 @@ func main() {
 	ctx = config.NewCtlConfigWithContext(ctx)
 	ctlConfig := config.CtlConfigFromContext(ctx)
 	//ctlConfig.SetLogger(logger)
-	rootCmd = commands.RootCmd(ctlConfig)
+	rootCmd, ctx = commands.RootCmd(ctx, ctlConfig)
 
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		os.Exit(1)

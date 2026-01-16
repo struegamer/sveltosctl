@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	appsv1 "k8s.io/api/apps/v1"
+	authenticationv1 "k8s.io/api/authentication/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -23,9 +24,11 @@ const cfgPath = ".sveltosctl"
 
 func (cfg *CtlConfig) Initialize(cmd *cobra.Command) error {
 	if cfg.Verbose {
-		cfg.logger.Logger().Info("Initializing Viper config")
+		cfg.logger.SetVerbose(true)
 	}
+	cfg.logger.Info("Initializing Viper config")
 	err := cfg.initViper()
+	cfg.createManagementClusterAccess()
 	if err != nil {
 		return err
 	}
@@ -64,6 +67,8 @@ func (cfg *CtlConfig) createManagementClusterAccess() {
 		eventv1beta1.AddToScheme,
 		rbacv1.AddToScheme,
 		apiextensionsv1.AddToScheme,
+		authenticationv1.AddToScheme,
 	}
 	cfg.mgmtCluster = k8s.NewCluster(apiSchemasList...)
+	cfg.mgmtCluster.SetLogger(cfg.logger)
 }

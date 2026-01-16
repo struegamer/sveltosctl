@@ -7,13 +7,17 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
+
+	"github.com/projectsveltos/sveltosctl/internal/logging"
 )
 
 type Cluster struct {
-	client     *Client
-	restConfig *rest.Config
-	clientSet  *kubernetes.Clientset
-	scheme     *runtime.Scheme
+	client        *Client
+	restConfig    *rest.Config
+	clientSet     *kubernetes.Clientset
+	scheme        *runtime.Scheme
+	logger        logging.Logger
+	CoreResources *CoreClient
 }
 
 type ApiSchemaFunc func(s *runtime.Scheme) error
@@ -33,6 +37,7 @@ func NewCluster(apiSchemas ...ApiSchemaFunc) *Cluster {
 	if err := cluster.initCluster(); err != nil {
 		panic(err)
 	}
+	cluster.initClients()
 	return cluster
 }
 
@@ -57,6 +62,18 @@ func (cluster *Cluster) initCluster() error {
 	}
 	cluster.client = c
 	return nil
+}
+func (cluster *Cluster) RestConfig() *rest.Config {
+	return cluster.restConfig
+}
+func (cluster *Cluster) SetLogger(logger logging.Logger) {
+	cluster.logger = logger
+	// When we set a new logger, all clients needs to use them, so reinit
+	cluster.initClients()
+}
+func (cluster *Cluster) initClients() {
+	cluster.CoreResources = NewCoreClientWithLogger(cluster.client, cluster.logger)
+
 }
 
 func (cluster *Cluster) addSchema(apiSchema ApiSchemaFunc) error {

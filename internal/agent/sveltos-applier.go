@@ -99,7 +99,7 @@ spec:
         - --cluster-namespace=
         - --cluster-name=
         - --cluster-type=
-        - --secret-with-kubeconfig=
+        - --secret-with-generate=
         - --v=5
         - --version=main
         command:
